@@ -1,0 +1,14 @@
+ls:- list all file inside particular folder.
+(touch filename.extenstion) -> this command for making file from command line in folder.
+(git status) -> it is for checking the status for folder of github.
+(git add .) -> its command for storing the all change in git folder.
+(git commit -m "message") -> this command is used for making the message during the push of file.
+(git add filename) -> file name particular in git folder.
+(git log) -> this command for git folder all details.
+(git stash) -> this command is used as to store file in stashing area and store file and used when we want.
+(git stash pop) -> this command used to get back file that is store in statshing area.
+(git stash clear) -> this command used for clearing stashing area.
+(git remote -v) -> this command used to show the all url that are linked with folder of particular git repo.
+(git branch branchname) -> this command is used to create new branch in repo.
+(git checkout branchname) -> this command is used to visit a particular repo.
+(fork) -> this is the option which make to able anyone to make chnage in any github project.
