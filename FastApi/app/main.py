@@ -87,3 +87,16 @@ async def delete(id:int):
 
     # return {"meassage":"Hello Delete"}
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+@app.put("/post/{id}")
+async def update_post(id:int, post:POST):
+    index=delete_post(id)
+    if index ==None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"post Not found {id}")
+    
+    post_dict = post.dict()
+    post_dict['id'] = id
+    my_post[index] = post_dict
+    print(post)
+    return{"message": post_dict}
