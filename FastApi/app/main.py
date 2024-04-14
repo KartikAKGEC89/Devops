@@ -53,30 +53,47 @@ def delete_post(id):
 async def root():
     return {"Message": "hello API"}
 
+# Read from DataBase --->
+
 
 @app.get('/post')
 async def root():
     cursor.execute("""SELECT * FROM posts;""")
     postdata = cursor.fetchall()
     print(postdata)
-    return {"Data": my_post} 
+    return {"Data": postdata} 
+
+
+# ----->
+
+# Create new in Database --->
 
 
 @app.post('/createposts')
 
 # payLoad: dict = Body(...) :- This is helpful for managing data
 
-async def createposts(new_post: POST):
+async def createposts(post: POST):
 
     # This is helpful for print data
 
-    new_post_dict = new_post.dict() 
-    new_post_dict['id'] = randrange(0,1000000)
+    # new_post_dict = new_post.dict() 
+    # new_post_dict['id'] = randrange(0,1000000)
 
-    my_post.append(new_post_dict)
+    # my_post.append(new_post_dict)
+
+    cursor.execute(""" INSERT INTO posts(tittle, content, published) VALUES (%s, %s, %s) RETURNING *""", 
+                   (post.tittle, post.content, post.published))
+    new_post = cursor.fetchone()
+
+    conn.commit()
     return{"data": new_post} 
 
-@app.get('/post/latest')
+
+# ---->
+
+
+@app.get('/post/latest')  
 async def latest_post():
     post = my_post[len(my_post) -1]
     return {"details":post} 
