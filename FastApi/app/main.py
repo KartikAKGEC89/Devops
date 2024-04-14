@@ -3,6 +3,8 @@ from fastapi.params import Body
 from pydantic import BaseModel
 from random import randrange
 from fastapi.responses import Response
+import psycopg2
+from psycopg2.extras import RealDictCursor
 
 
 app = FastAPI()
@@ -13,7 +15,19 @@ class POST(BaseModel):
     published: bool = True
     rating: int = None
 
+# connection part <----
 
+try:
+    conn = psycopg2.connect(host='localhost', database='FastApi', user='postgres', 
+    password='Deepak90@', cursor_factory=RealDictCursor)
+    cursor = conn.cursor()
+    print('Database connection successful')
+except Exception as error:
+    print("Database not connected")
+    print("error: ", error)
+
+
+# ------>
 
 my_post = [{"tittle":"the hello", "id":1},{"tittle":"the hello India", "id":2},{"tittle":"the hello UK", "id":3},]
 
