@@ -56,6 +56,9 @@ async def root():
 
 @app.get('/post')
 async def root():
+    cursor.execute("""SELECT * FROM posts;""")
+    postdata = cursor.fetchall()
+    print(postdata)
     return {"Data": my_post} 
 
 
