@@ -82,11 +82,20 @@ async def createposts(post: POST):
 
     # my_post.append(new_post_dict)
 
+    # --> Stage changes 
+
     cursor.execute(""" INSERT INTO posts(tittle, content, published) VALUES (%s, %s, %s) RETURNING *""", 
                    (post.tittle, post.content, post.published))
     new_post = cursor.fetchone()
 
+    # -->
+
+    # -->   Final change
+
     conn.commit()
+
+    # -->
+    
     return{"data": new_post} 
 
 
