@@ -95,7 +95,7 @@ async def createposts(post: POST):
     conn.commit()
 
     # -->
-    
+
     return{"data": new_post} 
 
 
@@ -107,16 +107,27 @@ async def latest_post():
     post = my_post[len(my_post) -1]
     return {"details":post} 
 
+
+# Fetch data by ID -->
+
 @app.get('/post/{id}')
 async def new_post(id: int, response: Response):
-    post = find_post(id)
+    # post = find_post(id)
+    # if not post:
+    #     raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
+    #                         detail=f"{id} not found")
+    #     # response.status_code = 404
+    #     # return {"message": f"{id} not found"}
+
+    cursor.execute(""" SELECT * FROM posts WHERE id = %s """, (str(id)))
+    post = cursor.fetchone()
     if not post:
         raise HTTPException(status_code = status.HTTP_404_NOT_FOUND,
                             detail=f"{id} not found")
-        # response.status_code = 404
-        # return {"message": f"{id} not found"}
     print(post)
     return{"Data": f"Here post {id} find successful {post}"}
+
+# -->
 
 
 
