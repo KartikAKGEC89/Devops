@@ -166,6 +166,8 @@ async def update_post(id:int, post:POST):
     cursor.execute(""" UPDATE posts SET tittle = %s, content = %s, published = %s RETURNING *""", 
                    (post.tittle, post.content, post.published))
     updatepost = cursor.fetchone()
+    conn.commit()
+    
     return{"message": updatepost}
 
 # -->
