@@ -130,17 +130,24 @@ async def new_post(id: int, response: Response):
 # -->
 
 
-
+# Delete post by ID -->
 
 @app.delete("/post/{id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete(id:int):
 
-    index=delete_post(id)
+    # index=delete_post(id)
 
-    my_post.pop(index)
+    # my_post.pop(index)
+
+    cursor.execute(""" DELETE FROM posts WHERE id = %s returning *""", (str(id)))
+    deletepost=cursor.fetchone()
+    conn.commit()
+    print(deletepost)
 
     # return {"meassage":"Hello Delete"}
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+# -->
 
 @app.put("/post/{id}")
 async def update_post(id:int, post:POST):
