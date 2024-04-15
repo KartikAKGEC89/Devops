@@ -149,15 +149,23 @@ async def delete(id:int):
 
 # -->
 
+# Update Post -->
+
 @app.put("/post/{id}")
 async def update_post(id:int, post:POST):
-    index=delete_post(id)
-    if index ==None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"post Not found {id}")
+    # index=delete_post(id)
+    # if index ==None:
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+    #                         detail=f"post Not found {id}")
     
-    post_dict = post.dict()
-    post_dict['id'] = id
-    my_post[index] = post_dict
-    print(post)
-    return{"message": post_dict}
+    # post_dict = post.dict()
+    # post_dict['id'] = id
+    # my_post[index] = post_dict
+    # print(post)
+
+    cursor.execute(""" UPDATE posts SET tittle = %s, content = %s, published = %s RETURNING *""", 
+                   (post.tittle, post.content, post.published))
+    updatepost = cursor.fetchone()
+    return{"message": updatepost}
+
+# -->
