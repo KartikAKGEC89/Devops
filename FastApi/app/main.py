@@ -1,30 +1,44 @@
-from fastapi import FastAPI, status, HTTPException
-from fastapi.params import Body
+from fastapi import FastAPI, Response, status, HTTPException, Depends
 from pydantic import BaseModel
-from random import randrange
-from fastapi.responses import Response
 import psycopg2
 from psycopg2.extras import RealDictCursor
+import time
+from sqlalchemy.orm import Session
+from sqlalchemy import MetaData
+from . import models
+from .database import SessionLocal, engine
 
+metadata = MetaData()
+metadata.create_all(engine)
 
 app = FastAPI()
-
-class POST(BaseModel):
+class Post(BaseModel):
+    id:int
     tittle: str
     content: str
     published: bool = True
-    rating: int = None
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 # connection part <----
 
-try:
-    conn = psycopg2.connect(host='localhost', database='FastApi', user='postgres', 
-    password='Deepak90@', cursor_factory=RealDictCursor)
-    cursor = conn.cursor()
-    print('Database connection successful')
-except Exception as error:
-    print("Database not connected")
-    print("error: ", error)
+while True:
+    try:
+        conn = psycopg2.connect(host='localhost', database='FastApi', user='postgres',
+                                password='Deepak90@', cursor_factory=RealDictCursor)
+        cursor = conn.cursor()
+        print("Database connection was succesfull!")
+        break
+    except Exception as error:
+        print("Connecting to database failed")
+        print("Error: ", error)
+        time.sleep(2)
 
 
 # ------>
@@ -55,6 +69,11 @@ async def root():
 
 # Read from DataBase --->
 
+@app.get("/sqlalchemy")
+def test_posts(db: Session = Depends(get_db)):
+    return {"status": "success"}
+
+
 
 @app.get('/post')
 async def root():
@@ -73,7 +92,7 @@ async def root():
 
 # payLoad: dict = Body(...) :- This is helpful for managing data
 
-async def createposts(post: POST):
+async def createposts(post: Post):
 
     # This is helpful for print data
 
@@ -152,7 +171,7 @@ async def delete(id:int):
 # Update Post -->
 
 @app.put("/post/{id}")
-async def update_post(id:int, post:POST):
+async def update_post(id:int, post:Post):
     # index=delete_post(id)
     # if index ==None:
     #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
