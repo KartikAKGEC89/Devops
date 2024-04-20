@@ -44,10 +44,12 @@ def find_index_post(id):
 def root():
     return {"message": "Hello World"}
 
-
+# SQLAlchemy get data from database -->
 @app.get("/sqlalchemy")
 def test_posts(db: Session = Depends(get_db)):
-    return {"status": "success"}
+    posts = db.query(models.Post).all()
+    return {"status": posts}
+# --->
 
 
 @app.get("/posts")
