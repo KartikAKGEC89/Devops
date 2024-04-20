@@ -102,23 +102,33 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 # -->
 
+
+# Delete post -->
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int):
-    cursor.execute(
-        """DELETE FROM posts WHERE id = %s returning *""", (str(id),))
-    deleted_post = cursor.fetchone()
-    conn.commit()
-    if deleted_post == None:
+def delete_post(id: int,  db: Session = Depends(get_db)):
+    # cursor.execute(
+    #     """DELETE FROM posts WHERE id = %s returning *""", (str(id),))
+    # deleted_post = cursor.fetchone()
+    # conn.commit()
+    delete_post = db.query(models.Post).filter(models.Post.id == id)
+    if delete_post.first() == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id: {id} does not exist")
+    db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+# -->
+
+
 @app.put("/posts/{id}")
-def update_post(id: int, post: Post):
-    cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
-                   (post.title, post.content, post.published, str(id)))
-    updated_post = cursor.fetchone()
-    conn.commit()
-    if updated_post == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"post with id: {id} does not exist")
-    return {"data": updated_post}
+def update_post(id: int, post: Post,  db: Session = Depends(get_db)):
+    # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
+    #                (post.title, post.content, post.published, str(id)))
+    # updated_post = cursor.fetchone()
+    # conn.commit()
+    updatedpost = db.query(models.Post).filter(models.Post.id == id).update(post.dict())
+    # if post == None:
+    #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+    #                         detail=f"post with id: {id} does not exist")
+    db.commit()
+    return {"data": updatedpost}
