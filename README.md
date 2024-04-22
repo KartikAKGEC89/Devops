@@ -1,5 +1,6 @@
-
 # POST APPLICATION USING DJANGO
+
+<img src="Banner.png" width="100%" />
 
 Django is a high-level Python web framework that enables rapid development of secure and maintainable websites and web applications. It follows the Model-View-Controller (MVC) architectural pattern, although it's often referred to as an MTV (Model-Template-View) framework in Django's case.
 
