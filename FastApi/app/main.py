@@ -2,6 +2,7 @@ from typing import Optional
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
+from passlib.hash import pbkdf2_sha256
 from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
@@ -132,6 +133,12 @@ def update_post(id: int, post: schemas.PostCreate,  db: Session = Depends(get_db
 
 @app.post('/createuser', status_code=status.HTTP_201_CREATED, response_model=schemas.Responseuser)
 def create_user(user: schemas.Usercreate, db: Session = Depends(get_db)):
+    
+    # Hashed Password -->
+    hash = pbkdf2_sha256.hash(user.password)
+    user.password = hash
+    # -->
+    
     new_user = models.User(**user.dict())
     db.add(new_user)
     db.commit()
