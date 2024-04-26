@@ -2,13 +2,12 @@ from typing import Optional
 from fastapi import FastAPI, Response, status, HTTPException
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
-from passlib.hash import pbkdf2_sha256
 from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
 from sqlalchemy.orm import Session
-from . import models, schemas
+from . import models, schemas, utils
 from .database import engine, get_db
 
 models.Base.metadata.create_all(bind=engine)
@@ -135,7 +134,7 @@ def update_post(id: int, post: schemas.PostCreate,  db: Session = Depends(get_db
 def create_user(user: schemas.Usercreate, db: Session = Depends(get_db)):
     
     # Hashed Password -->
-    hash = pbkdf2_sha256.hash(user.password)
+    hash = utils.hasedpassword(user.password)
     user.password = hash
     # -->
     
