@@ -20,3 +20,10 @@ class Post(BaseModel):
 class Usercreate(BaseModel):
     email:EmailStr
     password:str
+
+class Responseuser(BaseModel):
+    email:EmailStr
+    id:int
+
+    class config:
+        orm_mode=True
