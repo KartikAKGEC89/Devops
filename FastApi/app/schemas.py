@@ -8,3 +8,11 @@ class PostBase(BaseModel):
 
 class PostCreate(PostBase):
     pass
+
+class Post(BaseModel):
+    title: str
+    content: str
+    published: bool
+    
+    class config:
+        orm_mode = True
