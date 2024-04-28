@@ -3,7 +3,9 @@ from .. import models, schemas, utils
 from ..database import get_db
 from sqlalchemy.orm import Session
 
-router = APIRouter()
+router = APIRouter(
+    tags=["User Routes"]
+)
 
 
 @router.post('/createuser', status_code=status.HTTP_201_CREATED, response_model=schemas.Responseuser)
