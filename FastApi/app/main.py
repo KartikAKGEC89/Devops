@@ -143,3 +143,11 @@ def create_user(user: schemas.Usercreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
     return new_user
+
+@app.get('/user/{id}', response_model = schemas.GetResponseuser)
+def getusers(id:int, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.id == id).first()
+    if not user:
+        return {"error":"id not exist"}
+    
+    return user
