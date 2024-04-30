@@ -1,7 +1,10 @@
+from passlib.hash import bcrypt
+
 # Hashed Password -->
-from passlib.hash import pbkdf2_sha256
-
 def hasedpassword(password:str):
-    return pbkdf2_sha256.hash(password)
-
+    return bcrypt.hash(password)
+# -->
+#  Unhashed Password -->
+def verify(plain_password, hashed_password):
+    return bcrypt.verify(plain_password, hashed_password)
 # -->

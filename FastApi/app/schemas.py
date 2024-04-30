@@ -36,3 +36,7 @@ class GetResponseuser(BaseModel):
 
     class config:
         orm_mode=True
+
+class User_authenticate(BaseModel):
+    email:EmailStr
+    password:str
