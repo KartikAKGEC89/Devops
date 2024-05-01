@@ -1,7 +1,7 @@
 from fastapi import status, Depends, APIRouter
 from ..database import get_db
 from sqlalchemy.orm import Session
-from .. import utils, schemas, models
+from .. import utils, schemas, models, oauth2
 
 router = APIRouter(
     tags={"Authentication"}
@@ -19,4 +19,7 @@ def login_user(user_credentials: schemas.User_authenticate, db: Session = Depend
     if not utils.verify(user_credentials.password, user.password):
         return {"Invalid credentials"}
     
-    return {"Login successful"}
+
+    access = oauth2.create_access_token(data={"user id":user.id})
+    
+    return {"access_token": access}
