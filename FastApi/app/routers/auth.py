@@ -1,4 +1,5 @@
 from fastapi import status, Depends, APIRouter
+from fastapi.security.oauth2 import OAuth2PasswordRequestForm
 from ..database import get_db
 from sqlalchemy.orm import Session
 from .. import utils, schemas, models, oauth2
@@ -8,9 +9,9 @@ router = APIRouter(
 )
 
 @router.post('/login')
-def login_user(user_credentials: schemas.User_authenticate, db: Session = Depends(get_db)):
+def login_user(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
 
-    user = db.query(models.User).filter(models.User.email == user_credentials.email).first()
+    user = db.query(models.User).filter(models.User.email == user_credentials.username).first()
     print(user)
     
     if not user:
@@ -22,4 +23,4 @@ def login_user(user_credentials: schemas.User_authenticate, db: Session = Depend
 
     access = oauth2.create_access_token(data={"user id":user.id})
     
-    return {"access_token": access}
+    return {"access_token": access, "Token_type":"Bearer"}
