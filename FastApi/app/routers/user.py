@@ -7,6 +7,7 @@ router = APIRouter(
     tags=["User Routes"]
 )
 
+# Create New user -->
 
 @router.post('/createuser', status_code=status.HTTP_201_CREATED, response_model=schemas.Responseuser)
 def create_user(user: schemas.Usercreate, db: Session = Depends(get_db)):
@@ -22,6 +23,10 @@ def create_user(user: schemas.Usercreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
+# -->
+
+# Get user by id -->
+
 @router.get('/user/{id}', response_model = schemas.GetResponseuser)
 def getusers(id:int, db: Session = Depends(get_db)):
     user = db.query(models.User).filter(models.User.id == id).first()
@@ -29,3 +34,5 @@ def getusers(id:int, db: Session = Depends(get_db)):
         return {"error":"id not exist"}
     
     return user
+
+# -->

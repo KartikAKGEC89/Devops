@@ -34,7 +34,9 @@ def create_posts(post: schemas.PostCreate, db: Session = Depends(get_db), curren
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)
 
     print(current_user.email)
-    new_post = models.Post(**post.dict())
+    # way of adding one value from other table -->
+    new_post = models.Post(owner_id=current_user.id, **post.dict())
+    # -->
     db.add(new_post)
     db.commit()
     db.refresh(new_post)
@@ -61,7 +63,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 # Delete post -->
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int,  db: Session = Depends(get_db)):
+def delete_post(id: int,  db: Session = Depends(get_db), current_user: int= Depends(oauth2.get_current_user)):
     # cursor.execute(
     #     """DELETE FROM posts WHERE id = %s returning *""", (str(id),))
     # deleted_post = cursor.fetchone()
@@ -70,6 +72,7 @@ def delete_post(id: int,  db: Session = Depends(get_db)):
     if delete_post.first() == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id: {id} does not exist")
+    delete_post.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
 
@@ -77,7 +80,7 @@ def delete_post(id: int,  db: Session = Depends(get_db)):
 
 
 @router.put("/{id}")
-def update_post(id: int, post: schemas.PostCreate,  db: Session = Depends(get_db)):
+def update_post(id: int, post: schemas.PostCreate,  db: Session = Depends(get_db), current_user: int= Depends(oauth2.get_current_user)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
     #                (post.title, post.content, post.published, str(id)))
     # updated_post = cursor.fetchone()
