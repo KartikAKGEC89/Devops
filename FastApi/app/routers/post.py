@@ -2,6 +2,7 @@ from fastapi import status, Depends, APIRouter, HTTPException, Response
 from .. import models, schemas
 from ..database import get_db
 from sqlalchemy.orm import Session
+from typing import Optional
 from .. import oauth2
 
 router = APIRouter(
@@ -12,11 +13,21 @@ router = APIRouter(
 
 # Get data -->
 @router.get("/")
-def get_posts(db: Session = Depends(get_db)):
+def get_posts(db: Session = Depends(get_db), limits: int=10, skip:int=0, search: Optional[str] = ""):
     # cursor.execute("""SELECT * FROM posts """)
     # posts = cursor.fetchall()
 
-    posts = db.query(models.Post).all()
+    # Search from title = .filter(models.Post.title.contains(search))
+    # Limit = .limit(limits)
+    # Offset = .offset(skip).all()
+
+    # similary passed in function also :-
+    
+    # limit = limits: int=10,
+    # skip = skip:int=0,
+    # search = search: Optional[str] = ""
+
+    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limits).offset(skip).all()
     return posts
 
 # -->
@@ -69,9 +80,13 @@ def delete_post(id: int,  db: Session = Depends(get_db), current_user: int= Depe
     # deleted_post = cursor.fetchone()
     # conn.commit()
     delete_post = db.query(models.Post).filter(models.Post.id == id)
-    if delete_post.first() == None:
+    post = delete_post.first()
+    if post == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"post with id: {id} does not exist")
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORRBIDEN, detail="User are not owner of the post")
+
     delete_post.delete(synchronize_session=False)
     db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
@@ -89,5 +104,9 @@ def update_post(id: int, post: schemas.PostCreate,  db: Session = Depends(get_db
     # if post == None:
     #     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
     #                         detail=f"post with id: {id} does not exist")
+    post = updatedpost.first()
+    if post.owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORRBIDEN, detail="User are not owner of the post")
+    
     db.commit()
     return {"data": updatedpost}

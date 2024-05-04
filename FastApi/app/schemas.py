@@ -10,16 +10,20 @@ class PostBase(BaseModel):
 
 class PostCreate(PostBase):
     pass
-
+# Getting two database connection -->
+class Responseuser(BaseModel):
+    id:int
+    email:EmailStr
 class Post(BaseModel):
     title: str
     content: str
     published: bool
     owner_id: int
+    owner: Responseuser
     
     class config:
         orm_mode = True
-
+# -->
 # -->
 
 # Schemas for users -->
@@ -28,9 +32,6 @@ class Usercreate(BaseModel):
     email:EmailStr
     password:str
 
-class Responseuser(BaseModel):
-    id:int
-    email:EmailStr
 
     class config:
         orm_mode=True
