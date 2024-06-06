@@ -25,7 +25,13 @@ class Post(BaseModel):
     class config:
         orm_mode = True
 # -->
-# -->
+
+class PostOut(BaseModel):
+    Post:Post
+    votes:int
+
+    class Config:
+        orm_mode = True
 
 # Schemas for users -->
 
