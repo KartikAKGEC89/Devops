@@ -1,6 +1,7 @@
 from pydantic import BaseModel, EmailStr
 from datetime import datetime
 from typing import Optional
+from pydantic.types import conint
 
 # Schemas for Post Table in model -->
 class PostBase(BaseModel):
@@ -50,7 +51,7 @@ class User_authenticate(BaseModel):
 
 # -->
 
-# Tken schemas -->
+# Token schemas -->
 
 class Token(BaseModel):
     access_token: str
@@ -58,5 +59,11 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id:Optional[str] = None
+
+# -->
+# Vote schemas -->
+class Vote(BaseModel):
+    post_id: int
+    dir: conint(le=1)
 
 # -->
